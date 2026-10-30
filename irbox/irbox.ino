@@ -32,8 +32,8 @@ void setup() {
       "<p>Edges: <b id='c'>0</b></p>"
       "<textarea id='r' style='width:100%;height:200px;background:#222;color:#0f0'></textarea>"
       "<script>setInterval(async()=>{const d=await(await fetch('/data')).json();"
-      "document.getElementById('c').textContent=d.count;"
-      "document.getElementById('r').value=d.t.join(',');},1000);</script>"
+      "document.getElementById('c').textContent=d.raw.length;"
+      "document.getElementById('r').value=d.raw.join(',');},1000);</script>"
       "</body></html>");
   });
 
@@ -45,7 +45,7 @@ void setup() {
   });
 
   server.on("/data", []() {
-    String s = "{\"count\":" + String(n) + ",\"t\":[";
+    String s = "{\"freq\":38,\"raw\":[";
     uint16_t c = n;
     for (uint16_t i = 1; i < c; i++) {
       if (i > 1) s += ",";
