@@ -3,6 +3,7 @@
 
 const int RECV_PIN = 15;
 const int MAXN = 300;
+const uint32_t GAP_US = 20000;   // أي فترة أكبر من 20 ms تعتبر نهاية الإطار
 
 volatile uint32_t t[MAXN];
 volatile uint16_t n = 0;
@@ -44,12 +45,16 @@ void setup() {
     server.send(303);
   });
 
+  // يرسل الإطار الأول فقط، وينتهي بفترة الصمت
   server.on("/data", []() {
     String s = "{\"freq\":38,\"raw\":[";
     uint16_t c = n;
+    bool first = true;
     for (uint16_t i = 1; i < c; i++) {
-      if (i > 1) s += ",";
+      if (!first) s += ",";
+      first = false;
       s += String(t[i]);
+      if (i > 1 && t[i] > GAP_US) break;   // وصلنا لفترة الصمت بعد الإطار
     }
     s += "]}";
     server.send(200, "application/json", s);
